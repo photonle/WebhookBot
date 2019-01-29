@@ -10,3 +10,6 @@ http.createServer((res, req) => {
 		res.end('File Not Found')
 	})
 }).listen(env.port)
+
+handler.on('error', (err) => console.log(err))
+handler.on('push', (evt) => console.log(evt))
