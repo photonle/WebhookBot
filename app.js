@@ -31,6 +31,7 @@ handler.on('push', (evt) => {
 
 	let embeds = []
 	for (let commit of dt.commits){
+		if (!commit.distinct){continue}
 		console.log(commit)
 		// let blocked = commit.message.indexOf("private=1") !== -1
 		let blocked = false
@@ -65,6 +66,7 @@ handler.on('push', (evt) => {
 		})
 	}
 
+	if (embeds.length === 0){return}
 	discord.send("", {
 		avatarURL: "https://cdn.discordapp.com/attachments/480220200025718794/494230177115537429/discord-icon.jpg",
 		username: "Github Commit Bot",
