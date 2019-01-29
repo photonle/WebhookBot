@@ -11,5 +11,10 @@
     "Noble-N9": "Noble",
     "SuperMighty1": "Super Mighty",
     "TheSenDest": false
+  },
+  "colours": {
+    "photonle/WebhookBot": "10027212",
+    "photonle/Photon": "16724736",
+    "photonle/Additional-Content": "204"
   }
 }
