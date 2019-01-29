@@ -1,0 +1,11 @@
+{
+  "name": "photongithook",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "github-webhook-handler": "^0.7.0"
+  }
+}
