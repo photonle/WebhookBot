@@ -1,4 +1,5 @@
 const env = require('./.env.json')
+const {repos, users} = require('/data.json')
 const http = require('https')
 const fs = require('fs')
 const ghwebhook = require('github-webhook-handler')
@@ -21,4 +22,33 @@ http.createServer(opts, (req, res) => {
 
 handler.on('error', (err) => console.log(err))
 handler.on('push', (evt) => console.log(evt))
-handler.on('push', (evt) => {discord.send(evt.toString())})
+handler.on('push', (evt) => {
+	let dt = evt.payload
+
+	if (repos[dt.repository.full_name] === undefined){return console.log(`Invalid Repo: ${dt.repository.full_name}`)}
+	let repo = repos[dt.repository.full_name]
+	let embeds = []
+
+	for (let commit of dt.commits){
+		let blocked = commit.message.indexOf("private=1") !== -1
+		let name = users[commit.author.name] !== undefined ? (users[commit.author.name] ? users[commit.author.name] : commit.author.name) : "a new contributor"
+		if (name === "a new contributor"){console.log(`Undefined Contrib: ${commit.author.name}`)}
+
+		embeds.push({
+			author: {
+				name: name,
+				icon_url: commit.author.links.avatar.href
+			},
+			title: `New commit to ${repo}`,
+			type: "rich",
+			timestamp: commit.date,
+			description: blocked ? "A private commit." : commit.summary.raw
+		})
+	}
+
+	discord.send("", {
+		avatarURL: "https://cdn.discordapp.com/attachments/480220200025718794/494230177115537429/discord-icon.jpg",
+		username: "Discord Notifier Bot",
+		embeds: embeds
+	})
+})
