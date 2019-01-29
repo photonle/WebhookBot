@@ -38,7 +38,7 @@ handler.on('push', (evt) => {
 		embeds.push({
 			author: {
 				name: name,
-				icon_url: commit.author.links.avatar.href
+				icon_url: dt.sender.avatar_url
 			},
 			title: `New commit to ${repo}`,
 			type: "rich",
