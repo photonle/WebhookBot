@@ -30,7 +30,6 @@ handler.on('push', (evt) => {
 	let embeds = []
 
 	for (let commit of dt.commits){
-		console.log(commit.author)
 		// let blocked = commit.message.indexOf("private=1") !== -1
 		let blocked = false
 		let name = users[commit.author.username] !== undefined ? (users[commit.author.username] ? users[commit.author.username] : commit.author.username) : "a new contributor"
