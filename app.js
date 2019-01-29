@@ -1,5 +1,5 @@
 const env = require('./.env.json')
-const {repos, users} = require('/data.json')
+const {repos, users} = require('./data.json')
 const http = require('https')
 const fs = require('fs')
 const ghwebhook = require('github-webhook-handler')
