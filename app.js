@@ -10,7 +10,7 @@ const opts = {
 	cert: fs.readFileSync(env.https.cert)
 };
 
-http.createServer(opts, (res, req) => {
+http.createServer(opts, (req, res) => {
 	handler(req, res, (err) => {
 		console.log(err)
 		res.statusCode = 404
