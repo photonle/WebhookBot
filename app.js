@@ -1,5 +1,5 @@
 const env = require('./.env.json')
-const {repos, users} = require('./data.json')
+const {repos, users, colours} = require('./data.json')
 const http = require('https')
 const fs = require('fs')
 const ghwebhook = require('github-webhook-handler')
@@ -27,11 +27,13 @@ handler.on('push', (evt) => {
 
 	if (repos[dt.repository.full_name] === undefined){return console.log(`Invalid Repo: ${dt.repository.full_name}`)}
 	let repo = repos[dt.repository.full_name]
-	let embeds = []
+	let color = colours[dt.repository.full_name] !== undefined ? colours[dt.repository.full_name] : "4210752"
 
+	let embeds = []
 	for (let commit of dt.commits){
 		// let blocked = commit.message.indexOf("private=1") !== -1
 		let blocked = false
+
 		let name = users[commit.author.username] !== undefined ? (users[commit.author.username] ? users[commit.author.username] : commit.author.username) : "a new contributor"
 		if (name === "a new contributor"){console.log(`Undefined Contrib: ${commit.author.name}`)}
 
@@ -45,6 +47,7 @@ handler.on('push', (evt) => {
 			timestamp: commit.timestamp,
 			description: blocked ? "*Private Commit.*" : commit.message,
 			url: commit.url
+			color: color
 		})
 	}
 
