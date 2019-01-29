@@ -47,7 +47,12 @@ handler.on('push', (evt) => {
 			timestamp: commit.timestamp,
 			description: blocked ? "*Private Commit.*" : commit.message,
 			url: commit.url,
-			color: color
+			color: color,
+			fields: [{
+				name: "Branch",
+				value: dt.ref.replace('refs/heads/', ''),
+				inline: true
+			}]
 		})
 	}
 
