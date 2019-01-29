@@ -21,7 +21,7 @@ http.createServer(opts, (req, res) => {
 }).listen(env.port)
 
 handler.on('error', (err) => console.log(err))
-handler.on('push', (evt) => console.log(evt))
+// handler.on('push', (evt) => console.log(evt))
 handler.on('push', (evt) => {
 	let dt = evt.payload
 
@@ -30,8 +30,9 @@ handler.on('push', (evt) => {
 	let embeds = []
 
 	for (let commit of dt.commits){
+		console.log(commit.author)
 		let blocked = commit.message.indexOf("private=1") !== -1
-		let name = users[commit.author.name] !== undefined ? (users[commit.author.name] ? users[commit.author.name] : commit.author.name) : "a new contributor"
+		let name = users[commit.author.username] !== undefined ? (users[commit.author.username] ? users[commit.author.username] : commit.author.username) : "a new contributor"
 		if (name === "a new contributor"){console.log(`Undefined Contrib: ${commit.author.name}`)}
 
 		embeds.push({
