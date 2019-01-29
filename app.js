@@ -49,6 +49,7 @@ handler.on('push', (evt) => {
 	discord.send("", {
 		avatarURL: "https://cdn.discordapp.com/attachments/480220200025718794/494230177115537429/discord-icon.jpg",
 		username: "Discord Notifier Bot",
-		embeds: embeds
+		embeds: embeds,
+		split: true
 	})
 })
