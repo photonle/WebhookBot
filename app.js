@@ -52,6 +52,12 @@ handler.on('push', (evt) => {
 				name: "Branch",
 				value: dt.ref.replace('refs/heads/', ''),
 				inline: true
+			}, {
+				name: "Modified",
+				value: commit.added.length + commit.modified.length
+			}, {
+				name: "Deleted",
+				value: commit.removed.length
 			}]
 		})
 	}
