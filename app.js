@@ -21,4 +21,4 @@ http.createServer(opts, (req, res) => {
 
 handler.on('error', (err) => console.log(err))
 handler.on('push', (evt) => console.log(evt))
-handler.on('push', (evt) => {discord.send(evt)})
+handler.on('push', (evt) => {discord.send(evt.toString())})
