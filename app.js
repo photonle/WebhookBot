@@ -46,7 +46,7 @@ handler.on('push', (evt) => {
 			type: "rich",
 			timestamp: commit.timestamp,
 			description: blocked ? "*Private Commit.*" : commit.message,
-			url: commit.url
+			url: commit.url,
 			color: color
 		})
 	}
