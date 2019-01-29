@@ -43,7 +43,7 @@ handler.on('push', (evt) => {
 			title: `New commit to ${repo}`,
 			type: "rich",
 			timestamp: commit.date,
-			description: blocked ? "A private commit." : commit.summary.raw
+			description: blocked ? "A private commit." : commit.message
 		})
 	}
 
