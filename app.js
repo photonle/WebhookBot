@@ -1,9 +1,16 @@
 const env = require('./.env.json')
 const http = require('https')
+const fs = require('fs')
 const ghwebhook = require('github-webhook-handler')
 
 let handler = ghwebhook(env.git)
-http.createServer(env.https, (res, req) => {
+
+const opts = {
+	key: fs.readFileSync(env.https.key),
+	cert: fs.readFileSync(env.https.cert)
+};
+
+http.createServer(opts, (res, req) => {
 	handler(req, res, (err) => {
 		console.log(err)
 		res.statusCode = 404
