@@ -5,7 +5,7 @@ const ghwebhook = require('github-webhook-handler')
 const {RichEmbed, WebhookClient} = require('discord.js')
 
 let handler = ghwebhook(env.git)
-let discord = new WebhookClient(env.discord)
+let discord = new WebhookClient(env.discord.id, env.discord.token)
 const opts = {
 	key: fs.readFileSync(env.https.key),
 	cert: fs.readFileSync(env.https.cert)
