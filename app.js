@@ -31,7 +31,7 @@ handler.on('push', (evt) => {
 
 	for (let commit of dt.commits){
 		console.log(commit.author)
-		let blocked = commit.message.indexOf("private=1") !== -1
+		// let blocked = commit.message.indexOf("private=1") !== -1
 		let name = users[commit.author.username] !== undefined ? (users[commit.author.username] ? users[commit.author.username] : commit.author.username) : "a new contributor"
 		if (name === "a new contributor"){console.log(`Undefined Contrib: ${commit.author.name}`)}
 
@@ -43,13 +43,13 @@ handler.on('push', (evt) => {
 			title: `New commit to ${repo}`,
 			type: "rich",
 			timestamp: commit.timestamp,
-			description: blocked ? "A private commit." : commit.message
+			description: blocked ? "*Private Commit.*" : commit.message
 		})
 	}
 
 	discord.send("", {
 		avatarURL: "https://cdn.discordapp.com/attachments/480220200025718794/494230177115537429/discord-icon.jpg",
-		username: "Discord Notifier Bot",
+		username: "Github Commit Bot",
 		embeds: embeds,
 		split: true
 	})
