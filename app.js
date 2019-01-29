@@ -54,10 +54,12 @@ handler.on('push', (evt) => {
 				inline: true
 			}, {
 				name: "Modified",
-				value: commit.added.length + commit.modified.length
+				value: commit.added.length + commit.modified.length,
+				inline: true
 			}, {
 				name: "Deleted",
-				value: commit.removed.length
+				value: commit.removed.length,
+				inline: true
 			}]
 		})
 	}
