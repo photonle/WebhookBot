@@ -2,7 +2,8 @@
   "repos": {
     "photonle/WebhookBot": "Github Commit Bot",
     "photonle/Photon": "Photon Lighting Engine",
-    "photonle/Additional-Content": "Photon Additional Content"
+    "photonle/Additional-Content": "Photon Additional Content",
+    "photonle/Photon-Bot": "Photon Discord Bot"
   },
   "users": {
     "creator2013": "creator_2013",
@@ -15,6 +16,7 @@
   "colours": {
     "photonle/WebhookBot": "10027212",
     "photonle/Photon": "16724736",
-    "photonle/Additional-Content": "204"
+    "photonle/Additional-Content": "204",
+    "photonle/Photon-Bot": "4385012"
   }
 }
