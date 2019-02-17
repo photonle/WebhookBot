@@ -24,6 +24,7 @@ handler.on('error', (err) => console.log(err))
 // handler.on('push', (evt) => console.log(evt))
 handler.on('push', (evt) => {
 	let dt = evt.payload
+	if (dt.sender.type === 'Bot'){return}
 
 	if (repos[dt.repository.full_name] === undefined){return console.log(`Invalid Repo: ${dt.repository.full_name}`)}
 	let repo = repos[dt.repository.full_name]
