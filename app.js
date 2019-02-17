@@ -3,15 +3,15 @@ const {repos, users, colours} = require('./data.json')
 const http = require('https')
 const fs = require('fs')
 const ghwebhook = require('github-webhook-handler')
-const {RichEmbed, WebhookClient} = require('discord.js')
+const WebhookClient = require('discord.js')
 
 let handler = ghwebhook(env.git)
 let discord = new WebhookClient(env.discord.id, env.discord.token)
+
 const opts = {
 	key: fs.readFileSync(env.https.key),
 	cert: fs.readFileSync(env.https.cert)
-};
-
+}
 http.createServer(opts, (req, res) => {
 	handler(req, res, (err) => {
 		console.log(err)
@@ -21,7 +21,6 @@ http.createServer(opts, (req, res) => {
 }).listen(env.port)
 
 handler.on('error', (err) => console.log(err))
-// handler.on('push', (evt) => console.log(evt))
 handler.on('push', (evt) => {
 	let dt = evt.payload
 	if (dt.sender.type === 'Bot'){return}
