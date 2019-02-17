@@ -33,7 +33,6 @@ handler.on('push', (evt) => {
 	let embeds = []
 	for (let commit of dt.commits){
 		if (!commit.distinct){continue}
-		console.log(commit)
 		// let blocked = commit.message.indexOf("private=1") !== -1
 		let blocked = false
 
