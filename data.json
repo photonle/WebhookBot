@@ -11,7 +11,8 @@
     "JoshPiper": "Doctor Internet",
     "Noble-N9": "Noble",
     "SuperMighty1": "Super Mighty",
-    "TheSenDest": false
+    "TheSenDest": false,
+    "goigle": false
   },
   "colours": {
     "photonle/WebhookBot": "10027212",
