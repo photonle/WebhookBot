@@ -3,7 +3,7 @@ const {repos, users, colours} = require('./data.json')
 const http = require('https')
 const fs = require('fs')
 const ghwebhook = require('github-webhook-handler')
-const WebhookClient = require('discord.js')
+const {WebhookClient} = require('discord.js')
 
 let handler = ghwebhook(env.git)
 let discord = new WebhookClient(env.discord.id, env.discord.token)
