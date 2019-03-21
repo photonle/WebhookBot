@@ -66,8 +66,8 @@ handler.on('push', (evt) => {
 })
 
 async function run(){
-	let k = await cer.get_key()
-	let c = await cer.get_cert()
+	let k = await cert.get_key()
+	let c = await cert.get_cert()
 
 	let opts = {
 		key: k,
