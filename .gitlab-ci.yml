@@ -45,7 +45,7 @@ release-image:
   stage: deploy
   script:
     - 'docker pull "$CI_REGISTRY_IMAGE":"$DOCKER_IMG_VERSION"'
-    - scp $FTP_USER@$FTP_HOST:~/env/"$DOCKER_NAME" .env
+    - scp $FTP_USER@$FTP_HOST:~/env/"$DOCKER_NAME" .env || touch .env
     - docker rm --force "$DOCKER_NAME" || echo "Container already stopped."
     - docker run --env-file .env -d -e GITLAB_SHA="$CI_COMMIT_SHORT_SHA" -e GITLAB_ID="$CI_PIPELINE_IID" -e GITLAB_BRANCH="$CI_COMMIT_REF_NAME" --name "$DOCKER_NAME" -p "$PORT":10000 --restart always "$CI_REGISTRY_IMAGE":"$DOCKER_IMG_VERSION"
 
