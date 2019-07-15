@@ -1,17 +1,19 @@
 const http = require('https')
 const fs = require('fs')
-const ghwebhook = require('github-webhook-handler')
+const WebhookHandler = require('github-webhook-handler')
 const {WebhookClient} = require('discord.js')
 const certhandler = require('./cert.js')
 
 const {repos, users, colours} = require('./data.json')
-const env = require('./.env.json')
 
-let handler = ghwebhook(env.git)
-let discord = new WebhookClient(env.discord.id, env.discord.token)
-let cert = new certhandler(env.https.cert)
+let handler = WebhookHandler({
+	path: process.env.GIT_PATH,
+	secret: process.env.GIT_SECRET
+})
+let discord = new WebhookClient(process.env.DISCORD_ID, process.env.DISCORD_TOKEN)
+let cert = new certhandler("/cert")
 
-handler.on('error', (err) => console.log(err))
+handler.on('error', console.error)
 handler.on('push', (evt) => {
 	let dt = evt.payload
 	if (dt.sender.type === 'Bot'){return}
@@ -80,6 +82,6 @@ async function run(){
 			res.statusCode = 404
 			res.end('File Not Found')
 		})
-	}).listen(env.port)
+	}).listen(process.env.PORT)
 }
 run()
