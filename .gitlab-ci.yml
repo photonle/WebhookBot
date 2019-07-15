@@ -1,0 +1,82 @@
+image: docker:stable
+
+stages:
+  - build
+  - release
+  - deploy
+    
+variables:
+  DOCKER_DRIVER: overlay2
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+  PORT: 11500
+  
+before_script:
+    - 'which ssh-agent || ( apk update && apk add openssh-client )'
+    - eval $(ssh-agent -s)
+    - echo $SSH_AGENT_PID > /tmp/agent-${CI_JOB_ID}
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - ls ~/.ssh || mkdir ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+
+after_script:
+  - SSH_AGENT_PID=$(cat /tmp/agent-${CI_JOB_ID}) ssh-agent -k
+
+build:
+  stage: build
+  script:
+    - docker build --pull -t $CONTAINER_TEST_IMAGE .
+    - docker push $CONTAINER_TEST_IMAGE
+
+release-image:
+  stage: release
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - docker pull $CONTAINER_TEST_IMAGE
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+    - docker push $CONTAINER_RELEASE_IMAGE
+  only:
+    - master
+
+.deploy: &define_deploy
+  stage: deploy
+  script:
+    - 'docker pull "$CI_REGISTRY_IMAGE":"$DOCKER_IMG_VERSION"'
+    - scp $FTP_USER@$FTP_HOST:~/env/"$DOCKER_NAME" .env
+    - docker rm --force "$DOCKER_NAME" || echo "Container already stopped."
+    - docker run --env-file .env -d -e GITLAB_SHA="$CI_COMMIT_SHORT_SHA" -e GITLAB_ID="$CI_PIPELINE_IID" -e GITLAB_BRANCH="$CI_COMMIT_REF_NAME" --name "$DOCKER_NAME" -p "$PORT":10000 --restart always "$CI_REGISTRY_IMAGE":"$DOCKER_IMG_VERSION"
+
+.stop: &define_stop
+  stage: deploy
+  script:
+    - docker rm --force "$DOCKER_NAME" || echo "Container already stopped."
+  when:
+    manual
+
+deploy-master:
+  variables:
+    DOCKER_HOST: ssh://$FTP_USER@$FTP_HOST
+    GIT_STRATEGY: none
+    DOCKER_NAME: photon-git-relay
+    DOCKER_IMG_VERSION: latest
+  <<: *define_deploy
+  only:
+    - master
+  environment:
+    name: production
+    on_stop: stop-master
+
+stop-master:
+  variables:
+    DOCKER_HOST: ssh://$FTP_USER@$FTP_HOST
+    GIT_STRATEGY: none
+    DOCKER_NAME: photon-git-relay
+  <<: *define_stop
+  environment:
+    name: production
+    action: stop
+  only:
+    - master
