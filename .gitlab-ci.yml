@@ -27,6 +27,7 @@ after_script:
 build:
   stage: build
   script:
+    - scp $FTP_USER@$FTP_HOST:~/dck/photongit/.env.json .env.json
     - docker build --pull -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
 
@@ -46,7 +47,6 @@ release-image:
   script:
     - 'docker pull "$CI_REGISTRY_IMAGE":"$DOCKER_IMG_VERSION"'
     - scp $FTP_USER@$FTP_HOST:~/env/"$DOCKER_NAME" .env || touch .env
-    - scp $FTP_USER@$FTP_HOST:~/dck/photongit/.env.json .env.json
     - docker rm --force "$DOCKER_NAME" || echo "Container already stopped."
     - docker run --env-file .env -d -e GITLAB_SHA="$CI_COMMIT_SHORT_SHA" -e GITLAB_ID="$CI_PIPELINE_IID" -e GITLAB_BRANCH="$CI_COMMIT_REF_NAME" --name "$DOCKER_NAME" -p "$PORT":10000 --restart always "$CI_REGISTRY_IMAGE":"$DOCKER_IMG_VERSION"
 
