@@ -5,5 +5,8 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-EXPOSE 10000
+
+ENV PORT 10000
+EXPOSE ${PORT}
+
 CMD [ "npm", "start" ]
