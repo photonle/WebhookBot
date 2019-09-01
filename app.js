@@ -1,17 +1,14 @@
-const http = require('https')
-const fs = require('fs')
+const http = require('http')
 const WebhookHandler = require('github-webhook-handler')
 const {WebhookClient} = require('discord.js')
-const certhandler = require('./cert.js')
 
-const {repos, users, colours} = require('./data.json')
+const {repos, users, colours} = require('./data')
 
 let handler = WebhookHandler({
 	path: process.env.GIT_PATH,
 	secret: process.env.GIT_SECRET
 })
 let discord = new WebhookClient(process.env.DISCORD_ID, process.env.DISCORD_TOKEN)
-let cert = new certhandler("/cert")
 
 handler.on('error', console.error)
 handler.on('push', (evt) => {
@@ -67,21 +64,10 @@ handler.on('push', (evt) => {
 	})
 })
 
-async function run(){
-	let k = await cert.get_key()
-	let c = await cert.get_cert()
-
-	let opts = {
-		key: k,
-		cert: c
-	}
-
-	http.createServer(opts, (req, res) => {
-		handler(req, res, (err) => {
-			console.log(err)
+http.createServer((req, res) => {
+	handler(req, res, (err) => {
+		console.log(err)
 			res.statusCode = 404
 			res.end('File Not Found')
 		})
-	}).listen(process.env.PORT)
-}
-run()
+}).listen(process.env.PORT)
