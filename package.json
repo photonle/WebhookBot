@@ -1,6 +1,6 @@
 {
-  "name": "photongithook",
-  "version": "1.0.1",
+  "name": "photon-git-hook",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "start": "node app.js"
