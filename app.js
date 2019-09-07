@@ -34,8 +34,8 @@ handler.on('push', (evt) => {
 	let repoName = repo.full_name
 
 	if (!repos.has(repoName)){return console.log(`Invalid Repo: ${repoName}`)}
-	repoName = repos.raw(repoName)
 	let color = colours.has(repoName) ? colours.raw(repoName) : "4210752"
+	repoName = repos.raw(repoName)
 
 	let embeds = []
 	for (let commit of dt.commits){
