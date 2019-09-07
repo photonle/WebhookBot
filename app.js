@@ -1,58 +1,101 @@
 const http = require('http')
 const WebhookHandler = require('github-webhook-handler')
 const {WebhookClient} = require('discord.js')
+const EnvHandler = require('@doctor_internet/interenv')
 
-const {repos, users, colours} = require('./data')
-
-let handler = WebhookHandler({
-	path: process.env.GIT_PATH,
-	secret: process.env.GIT_SECRET
+let Env = new EnvHandler({
+	env: process.env,
 })
-let discord = new WebhookClient(process.env.DISCORD_ID, process.env.DISCORD_TOKEN)
+let repos = new EnvHandler({
+	env: require('./data').repos
+})
+let users = new EnvHandler({
+	env: require('./data').users
+})
+let colours = new EnvHandler({
+	env: require('./data').colours
+})
+
+let WebhookEnv = Env.prefixed("GIT_")
+let handler = WebhookHandler({
+	path: WebhookEnv.raw("PATH"),
+	secret: WebhookEnv.raw("SECRET")
+})
+
+let DiscordEnv = Env.prefixed("DISCORD_")
+let discord = new WebhookClient(DiscordEnv.raw("ID"), DiscordEnv.raw("TOKEN")
 
 handler.on('error', console.error)
 handler.on('push', (evt) => {
 	let dt = evt.payload
 	if (dt.sender.type === 'Bot'){return}
 
-	if (repos[dt.repository.full_name] === undefined){return console.log(`Invalid Repo: ${dt.repository.full_name}`)}
-	let repo = repos[dt.repository.full_name]
-	let color = colours[dt.repository.full_name] !== undefined ? colours[dt.repository.full_name] : "4210752"
+	let repo = dt.repository
+	let repoName = repo.full_name
+
+	if (!repos.has(repoName)){return console.log(`Invalid Repo: ${repoName}`)}
+	let color = colours.has(repoName) ? colours.raw(repoName) : "4210752"
+	let data = repos.raw(repoName)
 
 	let embeds = []
 	for (let commit of dt.commits){
 		if (!commit.distinct){continue}
-		// let blocked = commit.message.indexOf("private=1") !== -1
+
 		let blocked = false
+		if (blocked){continue}
 
-		let name = users[commit.author.username] !== undefined ? (users[commit.author.username] ? users[commit.author.username] : commit.author.username) : "a new contributor"
-		if (name === "a new contributor"){console.log(`Undefined Contrib: ${commit.author.name}`)}
+		let author = commit.author.username
+		let name
+		if (!users.has(author)){
+			console.log(`Undefined Contrib: ${commit.author.name}`)
+			name = "a new contributor"
+		} else if (users.raw(author)){
+			name = users.raw(author)
+		} else {
+			name = author
+		}
 
-		embeds.push({
+		let embed = {
 			author: {
 				name: name,
 				icon_url: dt.sender.avatar_url
 			},
-			title: `New commit to ${repo}`,
+			title: `New commit to ${repoName}`,
 			type: "rich",
 			timestamp: commit.timestamp,
-			description: blocked ? "*Private Commit.*" : commit.message,
+			description: commit.message,
 			url: commit.url,
 			color: color,
 			fields: [{
 				name: "Branch",
 				value: dt.ref.replace('refs/heads/', ''),
 				inline: true
-			}, {
-				name: "Modified",
-				value: commit.added.length + commit.modified.length,
-				inline: true
-			}, {
-				name: "Deleted",
-				value: commit.removed.length,
-				inline: true
 			}]
-		})
+		}
+
+		if (commit.added.length > 0){
+			embed.fields.push({
+				name: "New",
+				value: commit.added,
+				inline: true
+			})
+		}
+		if (commit.modified.length > 0){
+			embed.fields.push({
+				name: "Modified",
+				value: commit.modified,
+				inline: true
+			})
+		}
+		if (commit.removed.length > 0){
+			embed.fields.push({
+				name: "Deleted",
+				value: commit.removed,
+				inline: true
+			})
+		}
+
+		embeds.push(embed)
 	}
 
 	if (embeds.length === 0){return}
@@ -67,7 +110,7 @@ handler.on('push', (evt) => {
 http.createServer((req, res) => {
 	handler(req, res, (err) => {
 		console.log(err)
-			res.statusCode = 404
-			res.end('File Not Found')
-		})
-}).listen(process.env.PORT)
+		res.statusCode = 404
+		res.end('File Not Found')
+	})
+}).listen(Env.int("PORT"))
