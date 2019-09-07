@@ -37,7 +37,6 @@ handler.on('push', (evt) => {
 	repoName = repos.raw(repoName)
 	let color = colours.has(repoName) ? colours.raw(repoName) : "4210752"
 
-
 	let embeds = []
 	for (let commit of dt.commits){
 		if (!commit.distinct){continue}
