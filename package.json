@@ -6,7 +6,8 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "github-webhook-handler": "^0.7.0",
-    "discord.js": "^11.4.0"
+    "@doctor_internet/interenv": "^2.0.1",
+    "discord.js": "^11.4.0",
+    "github-webhook-handler": "^0.7.0"
   }
 }
