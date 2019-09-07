@@ -23,7 +23,7 @@ let handler = WebhookHandler({
 })
 
 let DiscordEnv = Env.prefixed("DISCORD_")
-let discord = new WebhookClient(DiscordEnv.raw("ID"), DiscordEnv.raw("TOKEN")
+let discord = new WebhookClient(DiscordEnv.raw("ID"), DiscordEnv.raw("TOKEN"))
 
 handler.on('error', console.error)
 handler.on('push', (evt) => {
