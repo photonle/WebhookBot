@@ -76,21 +76,21 @@ handler.on('push', (evt) => {
 		if (commit.added.length > 0){
 			embed.fields.push({
 				name: "New",
-				value: commit.added,
+				value: commit.added.length,
 				inline: true
 			})
 		}
 		if (commit.modified.length > 0){
 			embed.fields.push({
 				name: "Modified",
-				value: commit.modified,
+				value: commit.modified.length,
 				inline: true
 			})
 		}
 		if (commit.removed.length > 0){
 			embed.fields.push({
 				name: "Deleted",
-				value: commit.removed,
+				value: commit.removed.length,
 				inline: true
 			})
 		}
